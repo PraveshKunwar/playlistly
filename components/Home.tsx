@@ -3,14 +3,25 @@ import Login from "./Login";
 
 const Home: React.FC = () => {
   return (
-    <div className="home-section">
-      <section className="home-about">
-        <h1>
-          Seamlessly generate playlists based off listening history and other
-          statistics!
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        textAlign: "center",
+        height: "100vh",
+        gap: "2rem",
+        padding: "1rem",
+      }}
+    >
+      <section>
+        <h1 style={{ fontSize: "2rem", fontWeight: "bold", margin: 0 }}>
+          Seamlessly generate playlists based on your listening history and
+          other statistics!
         </h1>
       </section>
-      <section className="home-login">
+      <section>
         <Login />
       </section>
     </div>

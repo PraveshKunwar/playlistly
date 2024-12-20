@@ -7,6 +7,7 @@ import { Avatar, Box, Stack, Typography, Card } from "@mui/joy";
 const Generate: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     fetch("http://localhost:5000/me", { credentials: "include" })
       .then((res) => {
@@ -24,8 +25,19 @@ const Generate: React.FC = () => {
       })
       .catch((err) => console.error("Error fetching user data:", err));
   }, [navigate]);
+
   return (
-    <div className="generate-section">
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        height: "100vh",
+        textAlign: "center",
+        padding: "1rem",
+      }}
+    >
       <section className="generate-data">
         {userData ? (
           <div className="generate-user-data">
@@ -34,20 +46,17 @@ const Generate: React.FC = () => {
               sx={{
                 width: "50%",
                 minWidth: "300px",
-                margin: "2rem auto", // Centered with spacing
+                margin: "0 auto",
                 padding: "1.5rem",
                 boxShadow: "lg",
                 borderRadius: "12px",
                 backgroundColor: "gold",
-                // Media query for smaller screens
+                textAlign: "center",
                 "@media (max-width: 768px)": {
-                  width: "100%", // Full width on small devices
-                  margin: "0", // Remove margins
-                  borderRadius: "0", // Remove rounded corners
-                  position: "absolute", // Stick to the top
-                  top: 0, // Align to the top
-                  left: 0,
-                  padding: "1rem", // Slightly smaller padding
+                  width: "100%",
+                  margin: "0",
+                  borderRadius: "0",
+                  padding: "1rem",
                 },
               }}
             >
@@ -56,27 +65,42 @@ const Generate: React.FC = () => {
                   src={userData.images[0]?.url}
                   alt="playlistly"
                   sx={{
-                    width: userData.images[0]?.width,
-                    height: userData.images[0]?.height,
+                    width: "64px",
+                    height: "64px",
                   }}
                 />
-                <Box textAlign="center">
-                  <Typography level="h1" sx={{ fontWeight: "bold" }}>
+                <Box>
+                  <Typography
+                    level="h1"
+                    sx={{
+                      fontWeight: "bold",
+                      fontSize: "1.5rem",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
                     {userData.display_name}
                   </Typography>
-                  <Typography level="body-lg" color="neutral">
-                    <b>Welcome {userData.display_name}!</b>
+                  <Typography level="body-lg" sx={{ color: "#555" }}>
+                    <b>Welcome, {userData.display_name}!</b>
                   </Typography>
-                  <Typography level="body-sm" color="neutral">
+                  <Typography level="body-sm" sx={{ color: "#777" }}>
                     <b>Followers: {userData.followers.total}</b>
                   </Typography>
-                  <Typography level="body-sm" color="neutral">
-                    <b>email: {userData.email}</b>
+                  <Typography level="body-sm" sx={{ color: "#777" }}>
+                    <b>Email: {userData.email}</b>
                   </Typography>
                 </Box>
               </Stack>
             </Card>
-            <Logout />
+            <div
+              style={{
+                marginTop: "1.5rem",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <Logout />
+            </div>
           </div>
         ) : (
           <p>Loading...</p>
@@ -85,4 +109,5 @@ const Generate: React.FC = () => {
     </div>
   );
 };
+
 export default Generate;
