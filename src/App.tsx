@@ -63,7 +63,7 @@ const App: React.FC = () => {
                 <JoyLink component={Link} to="/" color="primary">
                   Home
                 </JoyLink>
-                <JoyLink component={Link} to="/misc" color="primary">
+                <JoyLink component={Link} to="/generate" color="primary">
                   Generate
                 </JoyLink>
               </Stack>
@@ -73,7 +73,7 @@ const App: React.FC = () => {
         {/* Define Routes */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/misc" element={<Generate />} />
+          <Route path="/generate" element={<Generate />} />
         </Routes>
       </div>
     </Router>
