@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserData } from "../interfaces/UserData";
 import { Avatar, Box, Stack, Typography, Card } from "@mui/joy";
+import HomeButton from "./HomeButton";
+import GenerateForm from "./GenerateForm";
 
 const Generate: React.FC = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -80,13 +82,13 @@ const Generate: React.FC = () => {
                   >
                     {userData.display_name}
                   </Typography>
-                  <Typography level="body-lg" sx={{ color: "#555" }}>
+                  <Typography level="body-lg">
                     <b>Welcome, {userData.display_name}!</b>
                   </Typography>
-                  <Typography level="body-sm" sx={{ color: "#777" }}>
+                  <Typography level="body-sm">
                     <b>Followers: {userData.followers.total}</b>
                   </Typography>
-                  <Typography level="body-sm" sx={{ color: "#777" }}>
+                  <Typography level="body-sm">
                     <b>Email: {userData.email}</b>
                   </Typography>
                 </Box>
@@ -99,8 +101,12 @@ const Generate: React.FC = () => {
                 justifyContent: "center",
               }}
             >
+              <HomeButton />
               <Logout />
             </div>
+            <section className="generate-form-section">
+              <GenerateForm />
+            </section>
           </div>
         ) : (
           <p>Loading...</p>
