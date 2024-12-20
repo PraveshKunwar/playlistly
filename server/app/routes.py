@@ -32,9 +32,13 @@ def top():
         'time_range': time_range,
         'limit': limit
     }
+    items = []
     url = f"https://api.spotify.com/v1/me/top/{item_type}"
-    response = requests.get(url, headers=headers, params=params)
-
-    if response.status_code == 200:
-        return jsonify(response.json())
-    return jsonify({"error": "Failed to fetch top items"}), response.status_code
+    while url:
+        response = requests.get(url, headers=headers, params=params)
+        if response.status_code != 200:
+            return jsonify({"error": "Failed to fetch top items"}), response.status_code
+        data = response.json()
+        items.extend(data.get('items', []))
+        url = data.get('next')
+    return jsonify(items)

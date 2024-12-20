@@ -7,6 +7,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { FormData, time } from "../interfaces/FormData";
 import { TopItems } from "../interfaces/TopItems";
 import { Button } from "@mui/joy";
+import TopData from "./TopData";
 
 const GenerateForm: React.FC = () => {
   const [data, setData] = useState<FormData>({
@@ -14,7 +15,7 @@ const GenerateForm: React.FC = () => {
     typeOf: undefined,
     limit: undefined,
   });
-  const [topItems, setTopItems] = useState<TopItems[]>([]);
+  const [topItems, setTopItems] = useState<TopItems[] | null>(null);
   const handleTimeRangeChange = (event: SelectChangeEvent<time>) => {
     setData((prevData) => ({
       ...prevData,
@@ -33,12 +34,11 @@ const GenerateForm: React.FC = () => {
         credentials: "include",
       });
       const topData = await response.json();
-      setTopItems(topData.items);
+      setTopItems(topData);
     } catch (err) {
       console.error("Error fetching user data:", err);
     }
   };
-  console.log(topItems);
   return (
     <div
       style={{
@@ -138,6 +138,14 @@ const GenerateForm: React.FC = () => {
           </Button>
         </form>
       </div>
+      <section className="generate-section-top-data">
+        {topItems ? (
+          <>
+            <h1>Your top artists:</h1>
+            <TopData items={topItems} />
+          </>
+        ) : null}
+      </section>
     </div>
   );
 };
