@@ -16,6 +16,8 @@ const GenerateForm: React.FC = () => {
     limit: undefined,
   });
   const [topItems, setTopItems] = useState<TopItems[] | null>(null);
+  const [genres, setGenres] = useState<Set<string>>(new Set());
+  const [preferredGenres, setPreferredGenres] = useState<string[]>([]);
   const handleTimeRangeChange = (event: SelectChangeEvent<time>) => {
     setData((prevData) => ({
       ...prevData,
@@ -35,8 +37,23 @@ const GenerateForm: React.FC = () => {
       });
       const topData = await response.json();
       setTopItems(topData);
+      topData.forEach((item: TopItems) => {
+        if (item.genres) {
+          setGenres((prevGenres) => new Set([...prevGenres, ...item.genres]));
+        }
+      });
     } catch (err) {
       console.error("Error fetching user data:", err);
+    }
+  };
+  const handleGeneratePlaylist = async () => {
+    const preferredArtists: Set<string> = new Set();
+    for (let i = 0; i < (topItems as TopItems[]).length; i++) {
+      for (let j = 0; j < preferredGenres.length; j++) {
+        if ((topItems as TopItems[])[i].genres?.includes(preferredGenres[j])) {
+          preferredArtists.add((topItems as TopItems[])[i].name);
+        }
+      }
     }
   };
   return (
@@ -141,6 +158,64 @@ const GenerateForm: React.FC = () => {
       <section className="generate-section-top-data">
         {topItems ? (
           <>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleGeneratePlaylist();
+              }}
+              style={{ width: "100%" }}
+            >
+              <FormControl
+                fullWidth
+                sx={{
+                  marginTop: "1rem",
+                  backgroundColor: "white",
+                }}
+              >
+                <InputLabel id="genre-label">Genres</InputLabel>
+                <Select
+                  labelId="genre-label"
+                  id="genre-select"
+                  multiple
+                  value={preferredGenres}
+                  onChange={(event) => {
+                    const {
+                      target: { value },
+                    } = event;
+                    setPreferredGenres(
+                      typeof value === "string" ? value.split(",") : value
+                    );
+                  }}
+                  renderValue={(selected) => selected.join(", ")}
+                >
+                  {[...genres].map((genre) => (
+                    <MenuItem key={genre} value={genre}>
+                      {genre}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  Select multiple genres that you like for your playlist.
+                </FormHelperText>
+              </FormControl>
+              <Button
+                type="submit"
+                variant="solid"
+                sx={{
+                  width: "100%",
+                  padding: "0.75rem",
+                  fontWeight: "bold",
+                  textTransform: "uppercase",
+                  backgroundColor: "#28a745",
+                  color: "white",
+                  ":hover": {
+                    backgroundColor: "#218838",
+                  },
+                }}
+              >
+                Generate Playlist
+              </Button>
+            </form>
             <h1>Your top artists:</h1>
             <TopData items={topItems} />
           </>
