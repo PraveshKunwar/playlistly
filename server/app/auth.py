@@ -46,6 +46,15 @@ def callback():
     tokens = response.json()
     session['access_token'] = tokens['access_token']
     session['refresh_token'] = tokens['refresh_token']
+    access_token = tokens['access_token']
+    headers = {'Authorization': f'Bearer {access_token}'}
+    user_response = requests.get("https://api.spotify.com/v1/me", headers=headers)
+    if user_response.status_code == 200:
+        user_data = user_response.json()
+        session['user_id'] = user_data.get('id')  # Store user_id in session
+    else:
+        return jsonify({"error": "Failed to fetch user data"}), user_response.status_code
+
     return redirect('http://localhost:5173/generate')
 
 # Refresh token Route

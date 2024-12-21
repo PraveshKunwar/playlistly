@@ -18,6 +18,7 @@ const GenerateForm: React.FC = () => {
   const [topItems, setTopItems] = useState<TopItems[] | null>(null);
   const [genres, setGenres] = useState<Set<string>>(new Set());
   const [preferredGenres, setPreferredGenres] = useState<string[]>([]);
+  const [playListURL, setPlayListURL] = useState<string | null>(null);
   const handleTimeRangeChange = (event: SelectChangeEvent<time>) => {
     setData((prevData) => ({
       ...prevData,
@@ -47,13 +48,43 @@ const GenerateForm: React.FC = () => {
     }
   };
   const handleGeneratePlaylist = async () => {
-    const preferredArtists: Set<string> = new Set();
+    if (playListURL != null) {
+      setPlayListURL(null);
+    }
+    const preferredArtists: Map<string, string> = new Map();
     for (let i = 0; i < (topItems as TopItems[]).length; i++) {
       for (let j = 0; j < preferredGenres.length; j++) {
         if ((topItems as TopItems[])[i].genres?.includes(preferredGenres[j])) {
-          preferredArtists.add((topItems as TopItems[])[i].name);
+          const artist = (topItems as TopItems[])[i];
+          if (!preferredArtists.has(artist.id)) {
+            preferredArtists.set(artist.id, artist.name);
+          }
         }
       }
+    }
+    try {
+      const response = await fetch("http://localhost:5000/gen/playlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          artists: Array.from(preferredArtists.entries()).map(([id, name]) => ({
+            id,
+            name,
+          })),
+        }),
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to generate playlist");
+      }
+      const data = await response.json();
+      if (data.playlist_url) {
+        setPlayListURL(data.playlist_url);
+      }
+    } catch (error) {
+      console.error("Error generating playlist:", error);
     }
   };
   return (
@@ -216,6 +247,14 @@ const GenerateForm: React.FC = () => {
                 Generate Playlist
               </Button>
             </form>
+            {playListURL ? (
+              <>
+                Your playlist is ready!{" "}
+                <a href={playListURL} target="_blank" rel="noreferrer">
+                  Click here to listen
+                </a>
+              </>
+            ) : null}
             <h1>Your top artists:</h1>
             <TopData items={topItems} />
           </>
